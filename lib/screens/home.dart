@@ -26,7 +26,9 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    ;
+    // WidgetsBinding.instance!.addPostFrameCallback((_) {
+    setState(() {});
+    // });
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -53,10 +55,14 @@ class _HomeState extends State<Home> {
                 BestOfTheDay(
                     book: getBestOfTheDayBook(bookProvider.user.books)),
                 if (bookProvider.lastPoint != null)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20.0),
-                    child: ContinueReading(lastPoint: bookProvider.lastPoint!),
-                  )
+                  Consumer<BookReadingProvider>(
+                      builder: (context, provider, _) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20.0),
+                      child:
+                          ContinueReading(lastPoint: bookProvider.lastPoint!),
+                    );
+                  })
               ],
             ),
           ],

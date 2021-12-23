@@ -2,11 +2,13 @@ import 'dart:developer';
 
 import 'package:book_reading/models/last_point.dart';
 import 'package:book_reading/models/user.dart';
+import 'package:book_reading/provider/book_reading_provider.dart';
 import 'package:book_reading/screens/book_view.dart';
 import 'package:book_reading/utils/utils.dart';
 import 'package:book_reading/widgets/home_widget/rating.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class BookInformation extends StatefulWidget {
   BookInformation({
@@ -44,26 +46,29 @@ class _BookInformationState extends State<BookInformation> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            bookProvider(context).bookReadingDetailsIndex == widget.bookIndex
-                ? BookDetails(details: widget.book.details)
-                : Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Rating(rating: widget.book.rating),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Text(widget.book.title),
-                        Text(widget.book.author),
-                      ],
-                    ),
-                  ),
+            Consumer<BookReadingProvider>(builder: (context, provider, _) {
+              return bookProvider(context).bookReadingDetailsIndex ==
+                      widget.bookIndex
+                  ? BookDetails(details: widget.book.details)
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Rating(rating: widget.book.rating),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Text(widget.book.title),
+                          Text(widget.book.author),
+                        ],
+                      ),
+                    );
+            }),
             SizedBox(
               height: 50,
               child: Row(

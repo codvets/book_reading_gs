@@ -2,10 +2,12 @@ import 'dart:developer';
 
 import 'package:book_reading/models/last_point.dart';
 import 'package:book_reading/models/user.dart';
+import 'package:book_reading/provider/book_reading_provider.dart';
 import 'package:book_reading/utils/utils.dart';
 import 'package:book_reading/widgets/home_widget/book_cover.dart';
 import 'package:book_reading/widgets/home_widget/book_information.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ReadingSection extends StatefulWidget {
   ReadingSection({
@@ -50,7 +52,9 @@ class _ReadingSectionState extends State<ReadingSection> {
                         book: book,
                         bookIndex: index,
                       ),
-                      bookProvider(context).bookReadingDetailsIndex == index
+                      Provider.of<BookReadingProvider>(context)
+                                  .bookReadingDetailsIndex ==
+                              index
                           ? SizedBox()
                           : Positioned(
                               top: -20,

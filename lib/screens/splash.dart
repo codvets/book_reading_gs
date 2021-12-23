@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:book_reading/models/last_point.dart';
 import 'package:book_reading/models/user.dart';
 import 'package:book_reading/screens/home.dart';
+import 'package:book_reading/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,6 +20,7 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   void initState() {
+    bookProvider(context).getUserData();
     Future.delayed(Duration(seconds: 2), () {
       Navigator.of(context).pushNamed(Home.routeName);
     });
