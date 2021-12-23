@@ -9,17 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BookInformation extends StatefulWidget {
-  BookInformation(
-      {Key? key,
-      required this.book,
-      required this.onShowingDetails,
-      required this.onLastPointChanged})
-      : super(key: key);
+  BookInformation({
+    Key? key,
+    required this.book,
+    required this.bookIndex,
+  }) : super(key: key);
 
   final Book book;
-  final Function(LastPoint) onLastPointChanged;
-
-  final Function(bool) onShowingDetails;
+  final int bookIndex;
 
   @override
   State<BookInformation> createState() => _BookInformationState();
@@ -47,7 +44,7 @@ class _BookInformationState extends State<BookInformation> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            isShowingDetails == true
+            bookProvider(context).bookReadingDetailsIndex == widget.bookIndex
                 ? BookDetails(details: widget.book.details)
                 : Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -74,13 +71,7 @@ class _BookInformationState extends State<BookInformation> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        if (isShowingDetails == false) {
-                          isShowingDetails = true;
-                        } else {
-                          isShowingDetails = false;
-                        }
-                        setState(() {});
-                        widget.onShowingDetails(isShowingDetails);
+                        bookProvider(context).showDetails(widget.bookIndex);
                       },
                       child: Container(
                         child: Center(
@@ -95,15 +86,10 @@ class _BookInformationState extends State<BookInformation> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
+                        bookProvider(context).currentlyReadingBook =
+                            widget.book;
                         Navigator.of(context).pushNamed(
                           BookView.routeName,
-                          arguments: BookViewArgs(
-                            book: widget.book,
-                            onLastPointChanged: (LastPoint lastPoint) {
-                              log("PRINTING LAST POINT CHANGED FROM BOOK INFORMATION");
-                              widget.onLastPointChanged(lastPoint);
-                            },
-                          ),
                         );
                       },
                       child: Container(

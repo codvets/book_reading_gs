@@ -10,12 +10,7 @@ import 'package:flutter/material.dart';
 class ReadingSection extends StatefulWidget {
   ReadingSection({
     Key? key,
-    required this.books,
-    required this.onLastPointChanged,
   }) : super(key: key);
-
-  final List<Book> books;
-  final Function(LastPoint) onLastPointChanged;
 
   @override
   State<ReadingSection> createState() => _ReadingSectionState();
@@ -38,41 +33,34 @@ class _ReadingSectionState extends State<ReadingSection> {
         ),
         Container(
           height: screenHeight(context) * 0.4,
-          child: ListView(
+          child: ListView.builder(
+            itemCount: bookProvider(context).user.books.length,
             padding: EdgeInsets.symmetric(horizontal: 25),
             scrollDirection: Axis.horizontal,
-            children: widget.books.map(
-              (book) {
-                return Padding(
-                  key: Key(book.title),
-                  padding: const EdgeInsets.only(right: 25.0),
-                  child: Center(
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        BookInformation(
-                            book: book,
-                            onShowingDetails: (bool isShowingDetails) {
-                              setState(() {
-                                isShowingCover = !isShowingDetails;
-                              });
-                            },
-                            onLastPointChanged: (LastPoint lastPoint) {
-                              log("PRINT LAST POINT CHANGED FROM READING SECTION");
-                              widget.onLastPointChanged(lastPoint);
-                            }),
-                        isShowingCover == true
-                            ? Positioned(
-                                top: -20,
-                                left: 25,
-                                child: BookCover(bookCover: book.bookCover))
-                            : SizedBox(),
-                      ],
-                    ),
+            itemBuilder: (context, index) {
+              final book = bookProvider(context).user.books[index];
+              return Padding(
+                key: Key(book.title),
+                padding: const EdgeInsets.only(right: 25.0),
+                child: Center(
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      BookInformation(
+                        book: book,
+                        bookIndex: index,
+                      ),
+                      bookProvider(context).bookReadingDetailsIndex == index
+                          ? SizedBox()
+                          : Positioned(
+                              top: -20,
+                              left: 25,
+                              child: BookCover(bookCover: book.bookCover))
+                    ],
                   ),
-                );
-              },
-            ).toList(),
+                ),
+              );
+            },
           ),
         )
       ],

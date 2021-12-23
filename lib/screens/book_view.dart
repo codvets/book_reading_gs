@@ -18,7 +18,6 @@ class BookView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as BookViewArgs;
     return Scaffold(
       body: Stack(
         children: [
@@ -28,7 +27,7 @@ class BookView extends StatelessWidget {
               bottomRight: Radius.circular(50),
             ),
             child: BookCover(
-              bookCover: args.book.bookCover,
+              bookCover: bookProvider(context).currentlyReadingBook!.bookCover,
               height: screenHeight(context) * 0.45,
               width: screenWidth(context),
               fit: BoxFit.cover,
@@ -37,21 +36,22 @@ class BookView extends StatelessWidget {
           ColorOverlay(),
           Column(
             children: [
-              BookDetails(book: args.book),
+              BookDetails(book: bookProvider(context).currentlyReadingBook!),
               Container(
                 height: screenHeight(context) * 0.4,
                 child: ListView.builder(
-                  itemCount: args.book.chapters.length,
+                  itemCount: bookProvider(context)
+                      .currentlyReadingBook!
+                      .chapters
+                      .length,
                   padding: EdgeInsets.zero,
                   itemBuilder: (context, index) {
-                    final chapter = args.book.chapters[index];
+                    final chapter = bookProvider(context)
+                        .currentlyReadingBook!
+                        .chapters[index];
                     return ChapterTile(
-                        chapter: chapter,
-                        book: args.book,
-                        onLastPointChanged: (LastPoint lastPoint) {
-                          log("PRINTING LAST POINT CHANGED FROM BOOK VIEW");
-                          args.onLastPointChanged(lastPoint);
-                        });
+                      chapter: chapter,
+                    );
                   },
                 ),
               )

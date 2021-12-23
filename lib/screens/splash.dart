@@ -19,32 +19,10 @@ class Splash extends StatefulWidget {
 class _SplashState extends State<Splash> {
   @override
   void initState() {
-    getUserData();
     Future.delayed(Duration(seconds: 2), () {
-      Navigator.of(context).pushNamed(Home.routeName,
-          arguments: HomeArgs(user: user, lastPoint: lastPoint));
+      Navigator.of(context).pushNamed(Home.routeName);
     });
     super.initState();
-  }
-
-  late User user;
-  LastPoint? lastPoint;
-
-  Future<void> getUserData() async {
-    final data = await rootBundle.loadString('assets/data/users.json');
-    final Map<String, dynamic> rawData = jsonDecode(data);
-    final userData = rawData["users"]["123456"];
-    this.user = User.fromJson(userData);
-
-    SharedPreferences _prefs = await SharedPreferences.getInstance();
-
-    final lastPointString = _prefs.getString("lastPoint");
-
-    if (lastPointString != null) {
-      final lastPointRaw = jsonDecode(lastPointString) as Map<String, dynamic>;
-
-      this.lastPoint = LastPoint.fromJson(lastPointRaw);
-    }
   }
 
   @override

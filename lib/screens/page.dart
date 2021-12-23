@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:book_reading/models/last_point.dart';
 import 'package:book_reading/models/user.dart';
+import 'package:book_reading/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,11 +21,9 @@ class _PageReadingState extends State<PageReading> {
 
   @override
   Widget build(BuildContext context) {
-    final PageReadingArguments args =
-        ModalRoute.of(context)!.settings.arguments as PageReadingArguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text(args.chapter.title),
+        title: Text(bookProvider(context).currentlyReadingChapter!.title),
         centerTitle: true,
         backgroundColor: Colors.black,
       ),
@@ -35,18 +34,16 @@ class _PageReadingState extends State<PageReading> {
             Expanded(
               child: PageView(
                   onPageChanged: (int index) {
-                    setLastLeftOffPoint(
-                      book: args.book,
-                      args: args,
-                      chapterNo: args.chapter.chapterNo,
-                      pageNo: index + 1,
-                    );
+                    bookProvider(context)
+                        .setLastLeftOffPoint(pageNo: index + 1);
                   },
-                  children: args.chapter.pages
+                  children: bookProvider(context)
+                      .currentlyReadingChapter!
+                      .pages
                       .map((page) => Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              args.chapter.pages[0],
+                              page,
                               textAlign: TextAlign.justify,
                               style: GoogleFonts.poppins(
                                 fontSize: 21,
@@ -59,31 +56,14 @@ class _PageReadingState extends State<PageReading> {
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
-              child: Text('$currentPage/${args.chapter.pages.length}',
+              child: Text(
+                  '$currentPage/${bookProvider(context).currentlyReadingChapter!.pages.length}',
                   style: GoogleFonts.poppins(fontSize: 21)),
             ),
           ],
         ),
       )),
     );
-  }
-
-  void setLastLeftOffPoint(
-      {required Book book,
-      required int chapterNo,
-      required int pageNo,
-      required PageReadingArguments args}) async {
-    SharedPreferences _pref = await SharedPreferences.getInstance();
-    final lastPoint = LastPoint(
-        bookTitle: book.title,
-        bookAuthor: book.author,
-        chapterNo: chapterNo,
-        totalChapters: book.chapters.length,
-        bookCover: book.bookCover,
-        pageNo: pageNo);
-    args.onLastPointChanged(lastPoint);
-
-    _pref.setString("lastPoint", jsonEncode(lastPoint.toJson()));
   }
 }
 
